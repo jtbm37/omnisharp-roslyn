@@ -369,11 +369,25 @@ namespace OmniSharp.MSBuild
 
         Task<object> IProjectSystem.GetProjectModel(string path)
         {
-            var document = _workspace.GetDocument(path);
-            if (document == null)
+            if(string.IsNullOrEmpty(path))
+            {
                 return Task.FromResult<object>(null);
+            }
 
-            var project = GetProject(document.Project.FilePath);
+            string projectName;
+            if(path.EndsWith("csproj"))
+            {
+                projectName = path;
+            }
+            else
+            {
+                var document = _workspace.GetDocument(path);
+                if (document == null)
+                    return Task.FromResult<object>(null);
+                projectName = document.Project.FilePath;
+            }
+
+            var project = GetProject(projectName);
             if (project == null)
                 return Task.FromResult<object>(null);
 
