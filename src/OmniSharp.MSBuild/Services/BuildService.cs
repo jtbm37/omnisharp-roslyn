@@ -110,21 +110,6 @@ namespace OmniSharp.MSBuild.Services
             _writer.WriteLine(e.Data);
         }
 
-        public Project GetProject(string path)
-        {
-            var loadedProjects = ProjectCollection.GlobalProjectCollection.LoadedProjects;
-            if(loadedProjects != null)
-            {
-                var existingProject = loadedProjects.FirstOrDefault(x => x.FullPath == path);
-                if(existingProject != null)
-                {
-                    return existingProject;
-                }
-            }
-            return new Microsoft.Build.Evaluation.Project(path);
-        }
-
-
     }
 
     public class BuildLogParser
