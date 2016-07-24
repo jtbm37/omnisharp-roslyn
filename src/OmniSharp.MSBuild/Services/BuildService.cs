@@ -1,15 +1,12 @@
 using System.Collections.Generic;
 using System.Composition;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Mef;
 using OmniSharp.Models;
 using OmniSharp.Models.V2;
 using OmniSharp.Services;
-using Project = Microsoft.Build.Evaluation.Project;
 using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -56,35 +53,38 @@ namespace OmniSharp.MSBuild.Services
                         args += " /p:BuildProjectReferences=false";
                     }
                     var buildLogPath = System.IO.Path.Combine(projectPath,"build.log");
-                    var buildLogFile = System.IO.File.Create(buildLogPath);
-                    using(_writer = new StreamWriter(buildLogFile))
+                    using(var buildLogFile = System.IO.File.Create(buildLogPath))
                     {
-                        var startInfo = new ProcessStartInfo
+                        using(_writer = new StreamWriter(buildLogFile))
                         {
-                            FileName = "msbuild",
-                            Arguments = args,
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true,
-                            RedirectStandardInput = true,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        };
+                            var startInfo = new ProcessStartInfo
+                            {
+                                FileName = "msbuild",
+                                Arguments = args,
+                                RedirectStandardOutput = true,
+                                RedirectStandardError = true,
+                                RedirectStandardInput = true,
+                                UseShellExecute = false,
+                                CreateNoWindow = true
+                            };
 
-                        var process = new Process
-                        {
-                            StartInfo = startInfo,
-                            EnableRaisingEvents = true
-                        };
+                            var process = new Process
+                            {
+                                StartInfo = startInfo,
+                                EnableRaisingEvents = true
+                            };
 
-                        process.ErrorDataReceived += ErrorDataReceived;
-                        process.OutputDataReceived += OutputDataReceived;
-                        process.Start();
-                        process.BeginOutputReadLine();
-                        process.BeginErrorReadLine();
+                            process.ErrorDataReceived += ErrorDataReceived;
+                            process.OutputDataReceived += OutputDataReceived;
+                            process.Start();
+                            process.BeginOutputReadLine();
+                            process.BeginErrorReadLine();
 
-                        process.WaitForExit();
-                        response.Quickfixes = _quickFixes;
-                        response.Success = _success;
+                            process.WaitForExit();
+                            response.Quickfixes = _quickFixes;
+                            response.Success = _success;
+                        }
+                        
                     }
                 }
             }
