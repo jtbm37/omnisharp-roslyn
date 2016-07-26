@@ -64,8 +64,12 @@ namespace OmniSharp.MSBuild.Services
             using(var testLogFile = System.IO.File.Create(testLogPath))
             {
                 var projectPath = project.TargetPath;
-                var args = $"/testcontainer:{projectPath} /detail:errorstacktrace /detail:errormessage /noresults";
-                var testArg = GetTest(request);
+                var args = $"/testcontainer:{projectPath} /detail:errorstacktrace /detail:errormessage /noresults ";
+                var testArg = await GetTest(request);
+                if(!string.IsNullOrEmpty(testArg))
+                {
+                    args += testArg;
+                }
                 _logger.LogDebug("Running mstest with args: " + args);
                 using(_writer = new StreamWriter(testLogFile))
                 {
