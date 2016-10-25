@@ -9,7 +9,7 @@ namespace OmniSharp.Helpers
 {
     public static class QuickFixHelper
     {
-        public static async Task<QuickFix> GetQuickFix(OmnisharpWorkspace workspace, Location location)
+        public static async Task<QuickFix> GetQuickFix(OmnisharpWorkspace workspace, Location location, bool trim = true)
         {
             if (!location.IsInSource)
                 throw new Exception("Location is not in the source tree");
@@ -23,7 +23,7 @@ namespace OmniSharp.Helpers
 
             return new QuickFix
             {
-                Text = text.Trim(),
+                Text = trim ? text.Trim() : text,
                 FileName = path,
                 Line = line,
                 Column = lineSpan.StartLinePosition.Character,
