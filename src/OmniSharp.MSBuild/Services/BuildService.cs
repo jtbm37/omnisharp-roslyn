@@ -39,6 +39,7 @@ namespace OmniSharp.MSBuild.Services
             var response = new BuildResponse();
             _quickFixes = new List<QuickFix>();
             _logParser = new BuildLogParser();
+            _success = false;
             foreach(var projectSystem in _projectSystems)
             {
                 var project = await projectSystem.GetProjectModel(request.FileName);
